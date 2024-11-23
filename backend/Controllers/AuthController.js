@@ -31,6 +31,7 @@ const register = async (req,res)=>{
 
 const login = async (req,res)=>{
     try{
+        // console.log("login validation");
         const {email,password} = req.body;
         const user = await UserModel.findOne({email});
         // console.log("user data: ",!user);
