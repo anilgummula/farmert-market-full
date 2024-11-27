@@ -1,35 +1,38 @@
 const express = require('express');
-// const mongoose = require('mongoose');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const AuthRouter = require('./Routes/AuthRouter.js');
-const ProductRouter = require('./Routes/ProductRouter.js');
-
+const FarmerRouter = require('./Routes/farmer.js'); // Add farmer routes
+const RetailerRouter = require('./Routes/retailer.js'); // Add retailer routes
 
 require('dotenv').config();
-require('./models/db.js');
-// const UserModel = require('./models/user.js');
+require('./models/db.js'); // Initialize database connection
 
 const app = express();
-// const PORT = process.env.PORT || 5000;
 const PORT = process.env.PORT || 5000;
 
-
-// app.use(express.json());
+// Middleware setup
 app.use(bodyParser.json());
-app.use(cors({
-    origin: 'https://farmarket.netlify.app',  // Allow requests from Netlify domain
-    methods: 'GET,POST,PUT,DELETE',  // Allow these methods
-    allowedHeaders: 'Content-Type,Authorization',  // Allow these headers
-    credentials: true,  // Allow cookies and credentials
-  }));
-app.use('/auth',AuthRouter);
-app.use('/products',ProductRouter);
+app.use(
+  cors({
+    origin: 'https://farmarket.netlify.app', // Allow requests from Netlify domain
+    methods: 'GET,POST,PUT,DELETE', // Allow these methods
+    allowedHeaders: 'Content-Type,Authorization', // Allow these headers
+    credentials: true, // Allow cookies and credentials
+  })
+);
 
-// app.get("/ping",(req,res)=>{
-//     res.send("hello");
-// })
+// Routes
+app.use('/auth', AuthRouter); // Authentication routes
+app.use('/farmer', FarmerRouter); // Farmer-specific routes
+app.use('/retailer', RetailerRouter); // Retailer-specific routes
 
-app.listen(PORT,()=>{
-    console.log(`server is running on ${PORT}`); 
-})
+// Health check endpoint
+app.get('/ping', (req, res) => {
+  res.send('Server is running!');
+});
+
+// Start server
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
