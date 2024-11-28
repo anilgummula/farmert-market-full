@@ -1,9 +1,9 @@
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const AuthRouter = require('./Routes/AuthRouter.js');
-const FarmerRouter = require('./Routes/farmer.js'); // Add farmer routes
-const RetailerRouter = require('./Routes/retailer.js'); // Add retailer routes
+const AuthRouter = require('./Routes/AuthRouter');
+const FarmerRouter = require('./Routes/farmer'); // Add farmer routes
+const RetailerRouter = require('./Routes/retailer'); // Add retailer routes
 
 require('dotenv').config();
 require('./models/db.js'); // Initialize database connection
@@ -15,9 +15,9 @@ const PORT = process.env.PORT || 5000;
 app.use(bodyParser.json());
 app.use(
   cors({
-    origin: 'https://farmarket.netlify.app', // Allow requests from Netlify domain
+    origin: 'https://farmarket.netlify.app/', // Allow requests from Netlify domain
     methods: 'GET,POST,PUT,DELETE', // Allow these methods
-    allowedHeaders: 'Content-Type,Authorization', // Allow these headers
+    allowedHeaders: 'Content-Type,authorization,Authorization', // Allow these headers
     credentials: true, // Allow cookies and credentials
   })
 );
