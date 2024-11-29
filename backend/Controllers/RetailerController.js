@@ -3,11 +3,13 @@ const Order = require('../models/Order');
 
 // Get all products listed by farmers
 exports.getAllProducts = async (req, res) => {
-  try {
-    const products = await Product.find().populate('farmer', 'username');
-    res.json(products);
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch products' });
+    try {
+        const products = await Product.find();
+        // console.log('Products retrieved:', products);
+        res.json(products); // Ensure products are sent as an object with `products` key
+      } catch (error) {
+    // console.error('Error fetching products:', error);
+    res.status(500).json({ error: 'Failed to fetch products 123' });
   }
 };
 
@@ -30,10 +32,11 @@ exports.buyProduct = async (req, res) => {
 
     // Create an order
     const order = new Order({
-      buyer: req.user.id,
-      product: productId,
-      quantity,
-      totalAmount,
+        name :product.name,
+        buyer: req.user._id,
+        product: productId,
+        quantity,
+        totalAmount,
     });
     await order.save();
 
@@ -54,7 +57,7 @@ exports.getMyOrders = async (req, res) => {
   }
 
   try {
-    const orders = await Order.find({ buyer: req.user.id }).populate('product', 'name price');
+    const orders = await Order.find({ buyer: req.user._id });
     res.json(orders);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch orders' });

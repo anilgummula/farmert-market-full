@@ -4,8 +4,9 @@ project/
 │   ├── FarmerController.js
 │   └── RetailerController.js
 ├── Middlewares/
-│   └── Auth.js
-│   └── AuthValidation.js
+│   ├── Auth.js
+│   ├── AuthValidation.js
+│   └── upload.js
 ├── models/
 │   ├── Product.js
 │   ├── Order.js
@@ -14,3 +15,7 @@ project/
 │   ├── Authrouter.js
 │   ├── farmer.js
 │   └── retailer.js
+├── uploads/
+│   └── products/   # Directory for uploaded product images
+├── index.js
+└── package.json
