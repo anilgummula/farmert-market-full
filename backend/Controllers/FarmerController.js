@@ -1,3 +1,4 @@
+// const User = require('../models/user');
 const Product = require('../models/Product');
 const Order = require('../models/Order'); // Ensure Order model is required if used in manageOrder
 
@@ -14,8 +15,13 @@ exports.getMyProducts = async (req, res) => {
 // Get orders for the logged-in farmer
 exports.getMyOrders = async (req, res) => {
   try {
-    const orders = await Order.find({ farmer: req.user._id }).populate('product');
-    res.status(200).json({ success: true, orders });
+    const orders = await Order.find({ farmer: req.user._id });
+    
+    // const buyerId = orders.buyer; 
+    // const buyer = await User.findById(buyerId);
+    // const buyerName = buyer.username;
+
+    res.status(200).json({ success: true,orders : orders });
   } catch (err) {
     res.status(500).json({ success: false, message: 'Failed to fetch orders!', error: err.message });
   }
@@ -46,9 +52,21 @@ exports.addProduct = async (req, res) => {
 exports.manageOrder = async (req, res) => {
   try {
     const { orderId } = req.params;
-    const { status } = req.body; // 'accepted' or 'rejected'
-
+    const { status } = req.body; // 'Accepted' or 'Rejected'
+    
     const order = await Order.findById(orderId);
+
+    // change remaining quantity of products if order rejected
+    if(status === "Rejected"){
+        const productId = order.product;
+        const orderQunatity = order.quantity;
+        // const buyerId = order.buyer;
+        // const user = await user.findById(buyerId);
+        const product = await Product.findById(productId);
+        product.quantity += orderQunatity;
+        product.save();
+    }
+
     if (!order) return res.status(404).json({ success: false, message: 'Order not found!' });
 
     order.status = status;

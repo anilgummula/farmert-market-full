@@ -20,10 +20,12 @@ exports.buyProduct = async (req, res) => {
   }
 
   const { productId } = req.params;
-  const { quantity } = req.body;
+  const {quantity} = req.body;
 
   try {
     const product = await Product.findById(productId);
+    const farmerId = product.farmer;
+
     if (!product || product.quantity < quantity) {
       return res.status(400).json({ error: 'Insufficient stock or product not found' });
     }
@@ -33,6 +35,7 @@ exports.buyProduct = async (req, res) => {
     // Create an order
     const order = new Order({
         name :product.name,
+        farmer : farmerId,
         buyer: req.user._id,
         product: productId,
         quantity,
