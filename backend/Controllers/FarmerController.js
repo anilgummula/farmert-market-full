@@ -14,6 +14,49 @@ exports.getMyProducts = async (req, res) => {
   }
 };
 
+
+// Update a product
+exports.updateProduct = async (req, res) => {
+    try {
+      const { productId } = req.params;
+      const { name, price, quantity, category } = req.body;
+  
+      const updatedProduct = await Product.findOneAndUpdate(
+        { _id: productId, farmer: req.user._id },
+        { name, price, quantity, category },
+        { new: true }
+      );
+  
+      if (!updatedProduct) {
+        return res.status(404).json({ success: false, message: 'Product not found or unauthorized!' });
+      }
+  
+      res.status(200).json({ success: true, message: 'Product updated successfully!', product: updatedProduct });
+    } catch (err) {
+      res.status(500).json({ success: false, message: 'Failed to update product!', error: err.message });
+    }
+  };
+  
+  // Delete a product
+  exports.deleteProduct = async (req, res) => {
+    try {
+      const { productId } = req.params;
+  
+      const deletedProduct = await Product.findOneAndDelete({
+        _id: productId,
+        farmer: req.user._id,
+      });
+  
+      if (!deletedProduct) {
+        return res.status(404).json({ success: false, message: 'Product not found or unauthorized!' });
+      }
+  
+      res.status(200).json({ success: true, message: 'Product deleted successfully!' });
+    } catch (err) {
+      res.status(500).json({ success: false, message: 'Failed to delete product!', error: err.message });
+    }
+  };
+
 // Get orders for the logged-in farmer
 exports.getMyOrders = async (req, res) => {
   try {
@@ -32,23 +75,19 @@ exports.getMyOrders = async (req, res) => {
 // Add a new product
 exports.addProduct = async (req, res) => {
   try {
-    const { productName, price, quantity, category} = req.body;
-    
-    const image = req.file || null ;
-    if (!image) {
-        return res.status(400).json({ success: false, message: "Image upload is required!" });
-    }
+        const { productName, price, quantity, category } = req.body;
+        if (!productName || !price || !quantity || !category) {
+        return res.status(400).json({ success: false, message: 'All fields are required!' });
+        }
+        const product = new Product({
+            name: productName,
+            price,
+            quantity,
+            category,
+            farmer: req.user._id, // Assuming farmer ID is in the JWT token
+        });
 
-    const product = new Product({
-      name: productName,
-      price,
-      quantity,
-      category,
-      image : image,
-      farmer: req.user._id, // Assuming farmer ID is in the JWT token
-    });
-
-    await product.save();
+        await product.save();
 
     res.status(201).json({ success: true, message: 'Product added successfully!' });
   } catch (err) {
